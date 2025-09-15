@@ -6,6 +6,7 @@ import com.PageLoginJWT.PageLoginJWT.IO.ProfileResponse;
 public interface ProfileService {
     ProfileResponse createProfile(ProfileRequest profileRequest);
 
+    ProfileResponse getProfile(String email);
 
 
 }

@@ -7,6 +7,8 @@ import com.PageLoginJWT.PageLoginJWT.Service.ProfileServiceimpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,9 +25,11 @@ public class ProfileController {
                 return (profileResponse);
             }
 
-            @GetMapping("/test")
-    public String test()
+            @GetMapping("/profile")
+    public ProfileResponse getProfile(@CurrentSecurityContext(expression = "authentication?.name")String email)
             {
-                return "the auth is working";
+                return profileService.getProfile(email);
+
             }
+
 }

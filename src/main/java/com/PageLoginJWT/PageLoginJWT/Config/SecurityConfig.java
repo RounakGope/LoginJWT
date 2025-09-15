@@ -37,6 +37,7 @@ public class SecurityConfig {
 
     private final AppUserDetailService appUserDetailService;
     private final JwtRequestFilter jwtRequestFilter;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
 
     @Bean
@@ -44,11 +45,14 @@ public class SecurityConfig {
         http.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/login","/logout","/register","/reset-password","/send-reset-otp").permitAll()
+                        .requestMatchers("/login","/logout","/register","/profile","/reset-password","/send-reset-otp").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(e->e.authenticationEntryPoint(customAuthenticationEntryPoint));
+
+
         return http.build();
     }
 
