@@ -7,6 +7,8 @@ import com.PageLoginJWT.PageLoginJWT.IO.ProfileResponse;
 import com.PageLoginJWT.PageLoginJWT.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,8 +35,9 @@ public class ProfileServiceimpl implements ProfileService{
 
     @Override
     public ProfileResponse getProfile(String email) {
-        UserEntity user=userRepository.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("User Not Found"));
-    return convertToProfileResponse(user);
+        UserEntity user=userRepository.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("User Name Not Found"));
+return convertToProfileResponse(user);
+
     }
 
 

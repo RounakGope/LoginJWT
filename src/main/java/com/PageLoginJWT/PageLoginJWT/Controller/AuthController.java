@@ -13,7 +13,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -79,5 +81,10 @@ public class AuthController {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email,password));
     }
 
+    @GetMapping("/is-Authenticated")
+    public ResponseEntity<Boolean> isAuthenticate(@CurrentSecurityContext(expression = "authentication?.name")String email)
+    {
+        return ResponseEntity.ok(email!=null);
+    }
 
 }
