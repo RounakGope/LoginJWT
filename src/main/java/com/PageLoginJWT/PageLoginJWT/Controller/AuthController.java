@@ -38,7 +38,7 @@ public class AuthController {
             final UserDetails userDetails=appUserDetailService.loadUserByUsername(authrequest.getEmail());
             //Now that it is authenticated there will me tokens added.
            String jwtToken= jwtUtil.generateTokens(userDetails);
-            ResponseCookie responseCookie= ResponseCookie.from("jwt")
+            ResponseCookie responseCookie= ResponseCookie.from("jwt",jwtToken)
                     .httpOnly(true)
                     .path("/")
                     .maxAge(Duration.ofDays(1))
