@@ -1,5 +1,6 @@
 package com.PageLoginJWT.PageLoginJWT.Config;
 
+import com.PageLoginJWT.PageLoginJWT.Filter.JwtRequestFilter;
 import com.PageLoginJWT.PageLoginJWT.Service.AppUserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
 import org.springframework.context.annotation.Bean;
@@ -34,6 +36,7 @@ public class SecurityConfig {
 
 
     private final AppUserDetailService appUserDetailService;
+    private final JwtRequestFilter jwtRequestFilter;
 
 
     @Bean
@@ -45,7 +48,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(AbstractHttpConfigurer::disable)
-                ;
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -84,5 +87,6 @@ public class SecurityConfig {
         return  new ProviderManager(auth);
 
     }
+
 
 }
