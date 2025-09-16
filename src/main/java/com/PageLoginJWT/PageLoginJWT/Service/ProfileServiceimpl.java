@@ -15,11 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
 public class ProfileServiceimpl implements ProfileService{
     private final UserRepository userRepository;
+    private final EmailService emailService;
     @Override
     public ProfileResponse createProfile(ProfileRequest profileRequest) {
         UserEntity newUser=convertToUserEntity(profileRequest);
@@ -37,6 +39,58 @@ public class ProfileServiceimpl implements ProfileService{
     public ProfileResponse getProfile(String email) {
         UserEntity user=userRepository.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("User Name Not Found"));
 return convertToProfileResponse(user);
+
+    }
+
+    @Override
+    public void sendResetOtp(String email) {
+        UserEntity user=userRepository.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("UserNotFound"));
+
+        //Generate 6Digit otp
+        String otp=String.valueOf(ThreadLocalRandom.current().nextInt(100000,1000000));
+
+        //Calculate Expiry Time
+        Long expiry=System.currentTimeMillis()+60*15*1000;
+
+        //update the user
+        user.setResetOtp(otp);
+        user.setResetOtpExpireAt(expiry);
+        userRepository.save(user);
+        try
+        {
+            //TODO send reset OTP
+            emailService.sendResetOtpMail(user.getEmail(),otp );
+        }
+        catch (Exception e)
+
+        {
+            throw new RuntimeException("Unable to Send OTP");
+
+        }
+
+
+
+    }
+
+    @Override
+    public void resetPassword(String email, String password, String otp) {
+        UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User Not Availabel"));
+        if (user.getResetOtp() == null || !user.getResetOtp().equals( otp))
+        {
+            throw  new RuntimeException("Invalid OTP");
+        }
+        if (user.getResetOtpExpireAt()<System.currentTimeMillis())
+        {
+            throw new RuntimeException("OTP is Expired");
+        }
+
+        user.setPassword(passwordEncoder.encode(password));
+        user.setResetOtpExpireAt(0L);
+        user.setResetOtp(null);
+
+        userRepository.save(user);
+
+
 
     }
 

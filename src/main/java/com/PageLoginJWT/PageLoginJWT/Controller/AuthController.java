@@ -2,8 +2,11 @@ package com.PageLoginJWT.PageLoginJWT.Controller;
 
 import com.PageLoginJWT.PageLoginJWT.IO.AuthRequest;
 import com.PageLoginJWT.PageLoginJWT.IO.AuthResponse;
+import com.PageLoginJWT.PageLoginJWT.IO.ResetPasswordRequest;
 import com.PageLoginJWT.PageLoginJWT.Service.AppUserDetailService;
+import com.PageLoginJWT.PageLoginJWT.Service.ProfileServiceimpl;
 import com.PageLoginJWT.PageLoginJWT.util.JWTUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,10 +18,8 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ public class AuthController {
     private  final AuthenticationManager authenticationManager;
     private final AppUserDetailService appUserDetailService;
     private final JWTUtil jwtUtil;
+    private final ProfileServiceimpl profileServiceimpl;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest authrequest)
@@ -86,5 +88,33 @@ public class AuthController {
     {
         return ResponseEntity.ok(email!=null);
     }
+
+    @PostMapping("/send-reset-otp")
+    public void sendResetOtp(@RequestParam String Email)
+    {
+        try {
+            profileServiceimpl.sendResetOtp(Email);
+        }
+        catch (Exception e)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
+        }
+        
+    }
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request)
+    {
+        try{
+
+            profileServiceimpl.resetPassword(request.getEmail(), request.getNewPassword(), request.getOtp());
+            return ResponseEntity.ok("Password Has Been Reset Successfully");
+        }
+        catch (Exception e)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+    }
+
+
 
 }
