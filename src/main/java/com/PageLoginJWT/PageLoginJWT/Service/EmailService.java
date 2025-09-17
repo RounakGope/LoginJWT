@@ -21,16 +21,37 @@ public class EmailService {
         message.setTo(toEmail);
         message.setSubject("Welcome To The Platform");
         message.setText("Hello "+name+
-        "\n\nThanks for registering to our platform!\n\n With Regards\n Authify Team");
+        "\n\nThanks for registering to our platform!\n\n With Regards\n Team Authentify");
         mailSender.send(message);
     }
+    public void sendVerifyMail(String toEmail,String name)
+    {
+        SimpleMailMessage message=new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(toEmail);
+        message.setSubject("Account Verification Done");
+        message.setText("Hello "+name+
+                "\n\nThanks for Verifying your Account to our platform!\n\n With Regards\n Authentify Team");
+        mailSender.send(message);
+    }
+
     public void sendResetOtpMail(String email,String OTP)
     {
         SimpleMailMessage mailMessage=new SimpleMailMessage();
         mailMessage.setTo(email);
         mailMessage.setFrom(fromEmail);
         mailMessage.setSubject("Password Reset OTP");
-        mailMessage.setText("Your Password Reset OTP is:"+OTP+"\n\n Use it before 15 minutes\n\n Team Authify");
+        mailMessage.setText("Your Password Reset OTP is:"+OTP+"\n\n Use it before 15 minutes\n\n Team Authentify");
+        mailSender.send(mailMessage);
+
+    }
+    public void sendVerifyOtpMail(String email,String OTP)
+    {
+        SimpleMailMessage mailMessage=new SimpleMailMessage();
+        mailMessage.setTo(email);
+        mailMessage.setFrom(fromEmail);
+        mailMessage.setSubject("Verify Account OTP");
+        mailMessage.setText("Your Account Verification OTP is:"+OTP+"\n\n Use it before 24 Hours\n\n Team Authentify");
         mailSender.send(mailMessage);
 
     }

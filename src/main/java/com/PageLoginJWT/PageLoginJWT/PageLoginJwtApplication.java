@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PageLoginJwtApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PageLoginJwtApplication.class, args);
+		SpringApplication.run(PageLoginJwtApplication.class, args);=
+		
 	}
 
 }

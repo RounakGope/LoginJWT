@@ -1,9 +1,12 @@
 package com.PageLoginJWT.PageLoginJWT.Controller;
 
+import com.PageLoginJWT.PageLoginJWT.Entity.UserEntity;
 import com.PageLoginJWT.PageLoginJWT.IO.AuthRequest;
 import com.PageLoginJWT.PageLoginJWT.IO.AuthResponse;
 import com.PageLoginJWT.PageLoginJWT.IO.ResetPasswordRequest;
+import com.PageLoginJWT.PageLoginJWT.Repository.UserRepository;
 import com.PageLoginJWT.PageLoginJWT.Service.AppUserDetailService;
+import com.PageLoginJWT.PageLoginJWT.Service.EmailService;
 import com.PageLoginJWT.PageLoginJWT.Service.ProfileServiceimpl;
 import com.PageLoginJWT.PageLoginJWT.util.JWTUtil;
 import jakarta.validation.Valid;
@@ -18,6 +21,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -32,6 +36,7 @@ public class AuthController {
     private final AppUserDetailService appUserDetailService;
     private final JWTUtil jwtUtil;
     private final ProfileServiceimpl profileServiceimpl;
+    private final EmailService emailService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest authrequest)
@@ -113,6 +118,39 @@ public class AuthController {
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
         }
+    }
+    @PostMapping("/send-otp")
+    public void sendVerifyOtp(@CurrentSecurityContext(expression = "authentication?.name")String email)
+    {
+
+        try
+        {
+            profileServiceimpl.sendOtp(email);
+        }
+        catch (Exception e)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
+        }
+    }
+    @PostMapping("/verify-otp")
+    public void verifyOtp(@RequestBody Map<String ,Object> map,@CurrentSecurityContext(expression = "authentication?.name")String email)
+    {
+       if (map.get("otp").toString()==null)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Please Give Otp");
+        }
+
+        try {
+            profileServiceimpl.verifyOtp(email,map.get("otp").toString());
+
+
+
+        }
+        catch (Exception e)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
+        }
+
     }
 
 
