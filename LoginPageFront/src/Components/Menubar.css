@@ -1,0 +1,4 @@
+.dropdown-item:hover {
+  background-color: #525151; /* Light red background */
+  color: #ffffff; /* Dark red text */
+}

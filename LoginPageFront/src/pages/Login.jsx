@@ -11,7 +11,7 @@ const Login =()=>{
     const [password,setPassword]=useState("");
     const[email,setEmail]=useState("");
     const[loading,setLoading]=useState(false);
-    const {backendURL}=useContext(AppContext);
+    const {backendURL, setIsLoggedIn,getUserData}=useContext(AppContext);
     const navigate =useNavigate();
 
 
@@ -37,9 +37,24 @@ const Login =()=>{
         }
         else{
             //login api
-        }
             
-        } catch (error) {
+                const response=await axios.post(`${backendURL}/login`,{email,password});
+
+                if(response.status==200)
+                {
+                    setIsLoggedIn(true);
+                    getUserData();
+                    navigate("/");
+                    toast.success("Logged In Successfully");
+                }
+                else
+                {
+                    toast.error("Email Or Password Wrong");
+                
+           } 
+        }
+       }
+        catch (error) {
             toast.error(error.response.data.message);
             
         }
@@ -51,7 +66,7 @@ const Login =()=>{
 
     return(
         <div className="position-relative min-vh-100 d-flex justify-content-center align-items-center "
-        style={{background: "linear-gradient(90deg, #ee0979, #ff6a00)",border:"none"}}>
+        style={{background: "linear-gradient(180deg, #17a4e0ff, #510773ff)",border:"none"}}>
 
             <div style={{position:"absolute",top:"20px" ,left:"30px", display:"flex" , alignItems:"center" }}>
                 <Link to="/" style={{

@@ -1,14 +1,16 @@
 import header from '../assets/header.png'
+import { AppContext } from '../context/AppContext';
+import { useContext } from 'react';
 const Header = ()=> {
+    const {userData} = useContext(AppContext)
  
     return (
        <div className="text-center d-flex flex-column align-items-center justify-content-center py-5 px-3 " style={{minHeight:"80vh"}}>
         <img src={header} alt="header" width={130} className="mb-4" />
         <h5 className='fw-semibold'>
-            Hey Everyone <span role='img' aria-level="wave">👌</span>
+            Hey {userData? userData.name : "Developer"} <span role='img' aria-level="wave">👌</span>
         </h5>
         <h1 className='fw-bold display-5 mb-3'>Welcome To My Website
-
         </h1>
         <p className='text-muted fs-5 mb-4' style={{maxWidth:"400px"}}>
             Get Ready To Experience My Website
