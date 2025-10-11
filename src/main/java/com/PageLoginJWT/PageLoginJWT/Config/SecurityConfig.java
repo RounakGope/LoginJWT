@@ -2,6 +2,8 @@ package com.PageLoginJWT.PageLoginJWT.Config;
 
 import com.PageLoginJWT.PageLoginJWT.Filter.JwtRequestFilter;
 import com.PageLoginJWT.PageLoginJWT.Service.AppUserDetailService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -9,6 +9,7 @@ import com.PageLoginJWT.PageLoginJWT.Service.AppUserDetailService;
 import com.PageLoginJWT.PageLoginJWT.Service.EmailService;
 import com.PageLoginJWT.PageLoginJWT.Service.ProfileServiceimpl;
 import com.PageLoginJWT.PageLoginJWT.util.JWTUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -142,14 +143,26 @@ public class AuthController {
 
         try {
             profileServiceimpl.verifyOtp(email,map.get("otp").toString());
-
-
-
         }
         catch (Exception e)
         {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
         }
+
+    }
+    @PostMapping("/logout")
+    public  ResponseEntity<?> logout(HttpServletResponse response)
+    {
+        ResponseCookie responseCookie=ResponseCookie.from("jwt","")
+                .httpOnly(true)
+                .maxAge(0)
+                .sameSite("Strict")
+                .path("/")
+                .secure(false)
+                .build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE,responseCookie.toString())
+                .body("Logged Out Successfully");
 
     }
 
