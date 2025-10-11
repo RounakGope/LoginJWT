@@ -16,7 +16,7 @@ const Login =()=>{
 
 
     const onSubmitHandler=async(e)=>
-    {
+    {   
         e.preventDefault();
         axios.defaults.withCredentials=true;
         setLoading(true);
@@ -117,8 +117,10 @@ const Login =()=>{
                         
                     )
                 }
-                <button type='submit' className='btn btn-primary w-100' disabled={loading} >
+                <button type='submit' className='btn btn-primary w-100' disabled={loading} 
+                onClick={onSubmitHandler}>
                     {
+                        
                     loading?"Loading...":isCreateAccount? "Register": "Login"
                     }</button>
 
