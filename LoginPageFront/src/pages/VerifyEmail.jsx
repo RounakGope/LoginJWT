@@ -1,8 +1,70 @@
+import { useContext, useState,useRef } from "react"
 import authentify from "../assets/Logo.png"
-import { Link } from "react-router-dom"
-
+import { Link, useNavigate } from "react-router-dom"
+import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 const VerifyEmail=()=>
 {
+    const[loading,setLoading]=useState(false);
+    const{getUserData,isLoggedIn,userData,backendURL}=useContext(AppContext);
+    const navigate=useNavigate();
+    const inputRef=useRef([]);
+    const handleChange=(e,index)=>{
+        const value=e.target.value.replace(/\D/,"");
+        e.target.value=value
+        if(value && index<5)
+        {
+            inputRef.current[index+1].focus();
+        }
+
+    }
+    const handleKeyDown=(e,index)=>
+    {
+        if(e.key==="Backspace"&& !e.target.value && index>0)
+        {
+            inputRef.current[index-1].focus();
+        }
+    }
+    const handlePaste=(e)=>{
+        e.preventDefault();
+        const paste=e.clipboardData.getData("text").slice(0,6).split("");
+        paste.forEach((digit,i) => {
+            if(inputRef.current[i])
+            {
+                inputRef.current[i].value=digit;
+            }
+            
+        });
+        const next=paste.length<6?paste.length:5;
+        inputRef.current[next].focus();
+    }
+    const handleVerify=async(e)=>
+    {
+        e.preventDefault();
+        const otp=inputRef.current.map((input)=>input.value).join("");
+        if(otp.length<6)
+        {
+            toast.error("please enter 6 digit otp");
+        }
+        setLoading(true);
+        try {
+            axios.defaults.withCredentials=true;
+            const response=await axios.post(backendURL+"/verify-otp",{otp})
+            if(response.status===200)
+            {
+                toast.success("Email Verified Successfully");
+                getUserData();
+                navigate("/")
+            }
+            else{
+                toast.error("Invalid OTP,Please Try Again");
+            }
+        } catch (error) {
+    console.error(error);
+    toast.error("Something went wrong,Please try again");
+}
+    }
     return(
        <div className="d-flex justify-content-center email-verify-container align-items-center vh-100 position-relative"
        style={{
@@ -25,12 +87,18 @@ const VerifyEmail=()=>
                 <input type="text"
                 key={i}
                 maxLength={1}
-                className="form-control text-center otp-input fs-6" />
+                className="form-control text-center otp-input fs-6" 
+                ref={(el)=>(inputRef.current[i]=el)}
+                onChange={(e)=>handleChange(e,i)}
+                onKeyDown={(e)=>handleKeyDown(e,i)}
+                onPaste={handlePaste}
+                />
 
             ))}
             </div>
-            <button className="btn btn-primary w-100">
-                Verify Email
+            <button className="btn btn-primary w-100" disabled={loading} onClick={handleVerify}>
+
+               {loading?"Verifying..":"Verify OTP"}
             </button>
 
 

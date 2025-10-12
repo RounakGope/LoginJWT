@@ -48,6 +48,26 @@ const Menubar=()=>
         }
 
     }
+    const sendVerifyOTP=async()=>
+    {
+        try{
+            axios.defaults.withCredentials=true;
+            const response =await axios.post(backendURL+"/send-otp");
+            if(response.status==200)
+            {
+                toast.success("OTP has been Sent");
+                navigate("/verify-email");
+            }
+            else
+            {
+                toast.error("Unable to sent OTP");
+            }
+        }
+        catch(e)
+        {
+            toast.error(e.message)
+        }
+    }
     
     
     const navigate=useNavigate();
@@ -82,8 +102,17 @@ const Menubar=()=>
                                 !userData.isAccountVerified && (
                                 <div className="dropdown-item py-1 px-2" style={{cursor:"pointer"
 
-                                    }}  >
+                                    }} onClick={sendVerifyOTP}  >
                                         Verify-Email
+                                </div>
+                                )
+                              }
+                              {
+                                userData.isAccountVerified && (
+                                <div className="dropdown-item py-1 px-2 text-normal" style={{cursor:"pointer"
+
+                                    }}  >
+                                       Email-Verified
                                 </div>
                                 )
                               }
