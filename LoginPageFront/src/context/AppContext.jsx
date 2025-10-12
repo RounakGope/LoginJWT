@@ -50,7 +50,7 @@ export const AppContextProvider=(props)=>{
         {
             setIsLoggedIn(false);
             console.error(e);
-            toast.error(e.message);
+            
         }
     }
     useEffect(()=>

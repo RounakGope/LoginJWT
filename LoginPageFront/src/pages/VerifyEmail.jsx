@@ -1,4 +1,4 @@
-import { useContext, useState,useRef } from "react"
+import { useContext, useState,useRef, useEffect } from "react"
 import authentify from "../assets/Logo.png"
 import { Link, useNavigate } from "react-router-dom"
 import { AppContext } from "../context/AppContext";
@@ -39,6 +39,8 @@ const VerifyEmail=()=>
         const next=paste.length<6?paste.length:5;
         inputRef.current[next].focus();
     }
+    
+    
     const handleVerify=async(e)=>
     {
         e.preventDefault();
@@ -65,6 +67,9 @@ const VerifyEmail=()=>
     toast.error("Something went wrong,Please try again");
 }
     }
+    useEffect(() => {
+      isLoggedIn && userData && userData.isAccountVerified && navigate("/");
+    }, [isLoggedIn,userData])
     return(
        <div className="d-flex justify-content-center email-verify-container align-items-center vh-100 position-relative"
        style={{
