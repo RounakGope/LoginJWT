@@ -88,32 +88,40 @@ public class ProfileServiceimpl implements ProfileService {
 
     }
 
+
     @Override
     public void sendOtp(String email) {
-        SimpleMailMessage simpleMailMessage= new SimpleMailMessage();
-        UserEntity user=userRepository.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("User not found"));
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-
-       // String otp=String.valueOf(ThreadLocalRandom.current().nextInt(100000,1000000));
-        if (user.getIsAccountVerified()!=null && user.getIsAccountVerified())
-        {
-            return;
+        // Check if account is already verified
+        if (user.getIsAccountVerified() != null && user.getIsAccountVerified()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account is already verified");
         }
-        //generate 6 digit otp
-        String otp=String.valueOf(ThreadLocalRandom.current().nextInt(100000,1000000));
 
-        Long expiryTime=System.currentTimeMillis()+(24*60*60*1000);
+        // Generate 6 digit otp
+        String otp = String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
 
+        // Set expiry time (24 hours)
+        Long expiryTime = System.currentTimeMillis() + (24 * 60 * 60 * 1000);
+
+        // Update user with OTP details
         user.setVerifyOtp(otp);
         user.setVerifyOtpExpireAt(expiryTime);
-
         userRepository.save(user);
-        emailService.sendVerifyOtpMail(email,otp);
 
-
-
-
+        // Send email with proper error handling
+        try {
+            emailService.sendVerifyOtpMail(email, otp);
+            System.out.println("Verification OTP sent successfully to: " + email); // Debug log
+        } catch (Exception e) {
+            // Log the actual error
+            System.err.println("Failed to send verification OTP: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Unable to send verification OTP. Please try again later.");
+        }
     }
+
 
     @Override
     public void verifyOtp(String email, String otp) {

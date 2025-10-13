@@ -2,6 +2,7 @@ package com.PageLoginJWT.PageLoginJWT.Service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -38,21 +39,46 @@ public class EmailService {
     public void sendResetOtpMail(String email,String OTP)
     {
         SimpleMailMessage mailMessage=new SimpleMailMessage();
-        mailMessage.setTo(email);
         mailMessage.setFrom(fromEmail);
+        mailMessage.setTo(email);
+
         mailMessage.setSubject("Password Reset OTP");
         mailMessage.setText("Your Password Reset OTP is:"+OTP+"\n\n Use it before 15 minutes\n\n Team Authentify");
         mailSender.send(mailMessage);
 
     }
-    public void sendVerifyOtpMail(String email,String OTP)
-    {
-        SimpleMailMessage mailMessage=new SimpleMailMessage();
+
+
+    public void sendVerifyOtpMail(String email, String OTP) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(email);
         mailMessage.setFrom(fromEmail);
-        mailMessage.setSubject("Verify Account OTP");
-        mailMessage.setText("Your Account Verification OTP is:"+OTP+"\n\n Use it before 24 Hours\n\n Team Authentify");
-        mailSender.send(mailMessage);
 
+        // Clear, professional subject line (avoid spam triggers)
+        mailMessage.setSubject("Verify Your Authentify Account");
+
+        // Professional, well-formatted content
+        String emailBody = String.format(
+                "Hello,%n%n" +
+                        "Thank you for registering with Authentify!%n%n" +
+                        "Your verification code is: %s%n%n" +
+                        "This code will expire in 24 hours.%n%n" +
+                        "If you did not request this code, please ignore this email.%n%n" +
+                        "Best regards,%n" +
+                        "The Authentify Team",
+                OTP
+        );
+
+        mailMessage.setText(emailBody);
+
+        try {
+            mailSender.send(mailMessage);
+            System.out.println("Verification email sent successfully to: " + email);
+        } catch (MailException e) {
+            System.err.println("Failed to send verification email: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error sending verification email: " + e.getMessage());
+        }
     }
+
 }
