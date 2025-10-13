@@ -104,6 +104,7 @@ The frontend will start at `http://localhost:5173`
 ---
 
 ## 📁 Project Structure
+```
 LoginJWT/
 ├── Client/ # React Frontend
 │ ├── public/ # Static assets
@@ -135,6 +136,7 @@ LoginJWT/
 ├── .gitignore
 └── README.md
 
+```
 ---
 
 ## 📡 API Documentation
