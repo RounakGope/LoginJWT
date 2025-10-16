@@ -1,3 +1,5 @@
 export const AppConstants={
-    BACKEND_URL:'http://localhost:8080/api/v1.0'
+   // BACKEND_URL:'http://localhost:8080/api/v1.0'
+    export const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api/v1.0";
+
 }
