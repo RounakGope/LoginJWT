@@ -69,7 +69,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource()
     {
         CorsConfiguration config=new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(List.of("http://localhost:5173","https://login-jwt-five.vercel.app"));
         config.setAllowedMethods(List.of("POST","GET","PUT","DELETE","PATCH","OPTIONS"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(List.of("Authorization","Content-Type"));
