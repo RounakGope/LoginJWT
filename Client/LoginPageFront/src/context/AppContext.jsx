@@ -5,13 +5,15 @@ import { toast } from "react-toastify";
 
 export const AppContext=createContext();
 export const AppContextProvider=(props)=>{
-    axios.defaults.withCredentials=true;
+    
     const backendURL=AppConstants.BACKEND_URL;
     const [isLoggedIn, setIsLoggedIn]=useState(false);
     const[userData,setUserData]=useState(false)
 
     const getUserData=async()=>
     {
+        axios.defaults.withCredentials=true;
+
         try {
             const response=await axios.get(`${backendURL}/profile`);
         if(response.status==200)
@@ -33,6 +35,7 @@ export const AppContextProvider=(props)=>{
     }
     const getAuthState=async()=>
     {
+        axios.defaults.withCredentials=true;
         try{
             
             const response =await axios.get(backendURL+"/is-Authenticated");
